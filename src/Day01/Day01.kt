@@ -1,43 +1,62 @@
+val spelledOutNumbers = listOf(
+    "1" to "one",
+    "2" to "two",
+    "3" to "three",
+    "4" to "four",
+    "5" to "five",
+    "6" to "six",
+    "7" to "seven",
+    "8" to "eight",
+    "9" to "nine",
+)
+
 fun main() {
-    fun part1(input: List<String>): Int {
-        var maxCalorieSum = 0
-        var curCalorieSum = 0
+    fun part1(input: List<String>): Int =
+        input.sumOf { line ->
+            line.first { it.isDigit() }.plus(
+                line.last { it.isDigit() }.toString()
+            ).toInt()
 
-        for (curCalories in input.map { it.toIntOrNull() }) {
-            if (curCalories != null) {
-                curCalorieSum += curCalories
-            } else {
-                maxCalorieSum = maxOf(maxCalorieSum, curCalorieSum)
-                curCalorieSum = 0
-            }
         }
-        maxCalorieSum = maxOf(maxCalorieSum, curCalorieSum)
 
-        return maxCalorieSum
-    }
 
-    fun part2(input: List<String>): Int {
-        var curCalorieSum = 0
-        val calSums = mutableListOf<Int>()
+    fun part2(input: List<String>): Int =
+        input.sumOf { line ->
+            val indexesOfSpelledOutNumbersFirst = spelledOutNumbers.mapNotNull { (digit, digitName) ->
+                val index = line.indexOf(digitName, ignoreCase = true)
 
-        for (curCalories in input.map { it.toIntOrNull() }) {
-            if (curCalories != null) {
-                curCalorieSum += curCalories
-            } else {
-                calSums.add(curCalorieSum)
-                curCalorieSum = 0
+                if (index >= 0) {
+                    digit to index
+                } else null
             }
-        }
-        calSums.add(curCalorieSum)
 
-        return calSums.sortedDescending().take(3).sum()
-    }
+            val indexesOfSpelledOutNumbersLast = spelledOutNumbers.mapNotNull { (digit, digitName) ->
+                val index = line.lastIndexOf(digitName, ignoreCase = true)
+
+                if (index >= 0) {
+                    digit to index
+                } else null
+            }
+
+            val indexOfFirstDigit = line.indexOfFirst { it.isDigit() }.takeIf { it >= 0 }
+            val x = indexesOfSpelledOutNumbersFirst.filter { indexOfFirstDigit == null || it.second < indexOfFirstDigit!! }
+                .minByOrNull { it.second }
+            val firstDigit = x?.first ?: line[indexOfFirstDigit!!].toString()
+
+            val indexOfLastDigit = line.indexOfLast { it.isDigit() }.takeIf { it >= 0 }
+            val y = indexesOfSpelledOutNumbersLast.filter { indexOfLastDigit == null || it.second > indexOfLastDigit!! }
+                .maxByOrNull { it.second }
+            val lastDigit = y?.first ?: line[indexOfLastDigit!!].toString()
+
+            firstDigit.plus(lastDigit).toInt()
+        }
+
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInput(name = "Day01", testInput = true)
-    check(part1(testInput) == 24000)
+    check(part2(testInput) == 281)
 
     val input = readInput(name = "Day01")
     part1(input).println()
-    part2(input).println()
+    part2(input).println() // should be 55413
 }

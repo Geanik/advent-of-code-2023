@@ -1,16 +1,16 @@
-val spelledOutNumbers = listOf(
-    "1" to "one",
-    "2" to "two",
-    "3" to "three",
-    "4" to "four",
-    "5" to "five",
-    "6" to "six",
-    "7" to "seven",
-    "8" to "eight",
-    "9" to "nine",
-)
-
 fun main() {
+    val spelledOutNumbers = listOf(
+        "1" to "one",
+        "2" to "two",
+        "3" to "three",
+        "4" to "four",
+        "5" to "five",
+        "6" to "six",
+        "7" to "seven",
+        "8" to "eight",
+        "9" to "nine",
+    )
+
     fun part1(input: List<String>): Int =
         input.sumOf { line ->
             line.first { it.isDigit() }.plus(
@@ -39,8 +39,9 @@ fun main() {
             }
 
             val indexOfFirstDigit = line.indexOfFirst { it.isDigit() }.takeIf { it >= 0 }
-            val x = indexesOfSpelledOutNumbersFirst.filter { indexOfFirstDigit == null || it.second < indexOfFirstDigit!! }
-                .minByOrNull { it.second }
+            val x =
+                indexesOfSpelledOutNumbersFirst.filter { indexOfFirstDigit == null || it.second < indexOfFirstDigit!! }
+                    .minByOrNull { it.second }
             val firstDigit = x?.first ?: line[indexOfFirstDigit!!].toString()
 
             val indexOfLastDigit = line.indexOfLast { it.isDigit() }.takeIf { it >= 0 }
@@ -58,5 +59,5 @@ fun main() {
 
     val input = readInput(name = "Day01")
     part1(input).println()
-    part2(input).println() // should be 55413
+    part2(input).println()
 }
